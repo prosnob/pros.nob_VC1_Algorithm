@@ -62,3 +62,4 @@ root.bind("<Left>",Left)
 canvas.pack(expand=True, fill='both')
 frame.pack(expand=True, fill='both')
 root.mainloop()
+
