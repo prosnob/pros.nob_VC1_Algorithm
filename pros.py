@@ -14,7 +14,7 @@ bg_win = canvas.create_image(350,400,image=bg)
 pl = tk.PhotoImage(file = "img/player.png")
 player = canvas.create_image(350,650,image=pl)
 #Variable---------------------------------------------------------------------
-oval = canvas.create_oval(50,50,100,100, fill = "blue")
+
 # winsound.PlaySound("sound/playing.wav",winsound.SND_FILENAME) 
 # rectangle = canvas.create_rectangle(235,650,365,670,fill="black")
 x = 0
@@ -26,6 +26,24 @@ y =10
 # IMG 
 
 # #Function---------------------------------------------------------------------
+def red():
+    size3 = random.randrange(100,600)
+    canvas.create_oval(size3,0,size3+20,20, fill = "red",tags="life")
+def black():
+    size2 = random.randrange(100,600)
+    canvas.create_oval(size2,0,size2+20,20, fill = "black",tags="boom")
+
+def ball():
+    canvas.move("ball",x,y)
+
+def boom():
+    black()
+    canvas.move("boom",x,y)
+
+def life():
+    red()
+    canvas.move("life",x,y)
+
 def myRectangle():
 #    print("User have clicked at position:",event.x,event.y)
    global x,y,condition
@@ -39,8 +57,17 @@ def myRectangle():
 #       y -=50
 #       if x==0 and y==0:
 #          condition = True
-   canvas.move(oval,x,y)
-   canvas.after(100,lambda:myRectangle())
+   size1 = random.randrange(100,600)
+#    size2 = random.randrange(100,600)
+#    size3 = random.randrange(100,600)
+   canvas.create_oval(size1,0,size1+20,20, fill = "blue",tags="ball")
+#    canvas.create_oval(size2,0,size2+20,20, fill = "black",tags="boom")
+#    canvas.create_oval(size3,0,size3+20,20, fill = "red",tags="life")
+   ball()
+   canvas.after(1000,lambda:boom())
+   canvas.after(5000,lambda:life())
+#    canvas.after(200,lambda:ball())
+   canvas.after(200,lambda:myRectangle())
    
 
 def Right(event):
