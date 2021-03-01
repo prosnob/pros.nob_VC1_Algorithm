@@ -20,7 +20,7 @@ coin = canvas.create_image(30,50,image=coin_image)
 lf =tk.PhotoImage(file="img/life.png")
 life = canvas.create_image(30,120 ,image=lf)
 soundon =tk.PhotoImage(file="img/soundon.png")
-canvas.create_image(650,50 ,image=soundon,tags="on")
+canvas.create_image(650,50 ,image=soundon,tags="sound")
 soundoff =tk.PhotoImage(file="img/soundoff.png")
 life_image= tk.PhotoImage(file="img/life.png")
 diamon_image= tk.PhotoImage(file="img/diamon.png")
@@ -57,29 +57,33 @@ def addLife():
     global allLife
     lifeX = random.randrange(100,600)
     allLife.append(canvas.create_image(lifeX,0,image=life_image,tags="coin"))
-    canvas.after(30000,lambda:addLife())
+    if gameCondition:
+        canvas.after(30000,lambda:addLife())
     
 
 def addDiamon():
     global allDiamon
     diamonX = random.randrange(100,600)
     allDiamon.append(canvas.create_image(diamonX,0,image=diamon_image,tags="coin"))
-    canvas.after(20000,lambda:addDiamon())
+    if gameCondition:
+        canvas.after(20000,lambda:addDiamon())
     
 
 def addBoom():
     global allBoom
     boomX = random.randrange(100,600)
     allBoom.append(canvas.create_image(boomX,0,image=boom_image,tags="coin"))
-    canvas.after(2000,lambda:addBoom())
+    if gameCondition:
+        canvas.after(2000,lambda:addBoom())
     
 
 def addCoin():
     global allCoin
     coinX = random.randrange(100,600)
     allCoin.append(canvas.create_image(coinX,0,image=coin_image,tags="coin"))
-    canvas.after(200,lambda:addCoin())
-    moveCoin()
+    if gameCondition:
+        canvas.after(200,lambda:addCoin())
+        moveCoin()
 
 # Removing Elements----------------------------------------------------------
 
@@ -146,12 +150,12 @@ def findBoomIndexAt(posX, posY):
 def Sound(event):
     global soundCondition,soundX,soundY
     if (event.x >= soundX - 15 and event.x <= soundX + 15) and (event.y >= soundY - 15 and event.y <= soundY + 15)and soundCondition:
-        canvas.delete("on")
-        canvas.create_image(650,50 ,image=soundoff,tags="on")
+        canvas.delete("sound")
+        canvas.create_image(650,50 ,image=soundoff,tags="sound")
         soundCondition = False
     elif (event.x >= soundX - 15 and event.x <= soundX + 15) and (event.y >= soundY - 15 and event.y <= soundY + 15)and not soundCondition:
-        canvas.delete("on")
-        canvas.create_image(650,50 ,image=soundon,tags="on")
+        canvas.delete("sound")
+        canvas.create_image(650,50 ,image=soundon,tags="sound")
         soundCondition = True
 def moveCoin():
     global coins,lives,diamons,booms,gameCondition
@@ -229,12 +233,14 @@ def moveCoin():
 # Moving position player-----------------------------------------   
         
 def Right(event):
-    if getPlayerX() < 650:
-        canvas.move(player,50,0)
+    if gameCondition:
+        if getPlayerX() < 650:
+            canvas.move(player,50,0)
 
 def Left(event):
-    if getPlayerX() > 50:
-        canvas.move(player,-50,0)
+    if gameCondition:
+        if getPlayerX() > 50:
+            canvas.move(player,-50,0)
 
 # Get position of Player
 
@@ -249,7 +255,7 @@ canvas.after(5000,lambda:addBoom())
 canvas.after(10000,lambda:addDiamon())
 canvas.after(20000,lambda:addLife())
 
-canvas.tag_bind("on","<Button-1>",Sound)
+canvas.tag_bind("sound","<Button-1>",Sound)
 root.bind("<Right>",Right)
 root.bind("<Left>",Left)
 
