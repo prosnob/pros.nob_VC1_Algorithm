@@ -2,8 +2,7 @@
 import tkinter as tk
 import random
 import os.path
-from os import path
-# from playsound import playsound
+from os import path 
 #Windows----------------------------------------------------------------------
 root = tk.Tk()
 root.geometry("700x800")
@@ -11,13 +10,11 @@ frame = tk.Frame()
 frame.master.title("pros.nob")
 canvas = tk.Canvas(frame)
 #Constants--------------------------------------------------------------------
-# winsound.PlaySound("sound/playing.wav",winsound.SND_FILENAME)
-# playsound("sound/playing.wav")
+
 position=[]
 positionplayer=[]
 bg = tk.PhotoImage(file = "img/bg.png")
 bg_win = canvas.create_image(350,400,image=bg)  
-# canvas.create_rectangle(0,0,800,100,fill="blue")
 pl = tk.PhotoImage(file = "img/player.png")
 player = canvas.create_image(350,650,image=pl)
 coin_image = tk.PhotoImage(file = "img/coin.png")
@@ -48,10 +45,16 @@ pauseY = 90
 soundCondition = True
 gameCondition = True
 pauseCondition = True
+startGame = True
 allCoin =[]
 allLife =[]
 allDiamon =[]
 allBoom =[]
+
+
+monster = tk.PhotoImage(file="img/monster.png")
+canvas.create_image(350,50,image=monster)
+
 
 coins = 0
 lives = 3
@@ -70,7 +73,7 @@ def addLife():
     lifeX = random.randrange(100,600)
     allLife.append(canvas.create_image(lifeX,-20,image=life_image,tags="coin"))
     if gameCondition and pauseCondition: 
-        canvas.after(30000,lambda:addLife())
+        canvas.after(50000,lambda:addLife())
     
 
 def addDiamon():
@@ -78,7 +81,7 @@ def addDiamon():
     diamonX = random.randrange(100,600)
     allDiamon.append(canvas.create_image(diamonX,-20,image=diamon_image,tags="coin"))
     if gameCondition and pauseCondition:
-        canvas.after(20000,lambda:addDiamon())
+        canvas.after(30000,lambda:addDiamon())
     
 
 def addBoom():
@@ -169,20 +172,20 @@ def Sound(event):
         canvas.delete("sound")
         canvas.create_image(650,50 ,image=soundon,tags="sound")
         soundCondition = True
-    if path.exists('saveandreloadgame.py'):
-        readFile = open("pros.py","r")
-        newlines = readFile.read()
-        readFile.close()
-        my_homework = open("saveandreloadgame.py","w")
-        my_homework.write(newlines)
-        my_homework.close()
-    else:
-        readFile = open("pros.py","r")
-        newlines = readFile.read()
-        readFile.close()
-        my_homework = open("saveandreloadgame.py","x")
-        my_homework.write(newlines)
-        my_homework.close()
+    # if path.exists('saveandreloadgame.py'):
+    #     readFile = open("pros.py","r")
+    #     newlines = readFile.read()
+    #     readFile.close()
+    #     my_homework = open("saveandreloadgame.py","w")
+    #     my_homework.write(newlines)
+    #     my_homework.close()
+    # else:
+    #     readFile = open("pros.py","r")
+    #     newlines = readFile.read()
+    #     readFile.close()
+    #     my_homework = open("saveandreloadgame.py","x")
+    #     my_homework.write(newlines)
+    #     my_homework.close()
         
 
 def Pause(event):
@@ -197,8 +200,8 @@ def Pause(event):
             moveCoin()
             canvas.after(200,lambda:addCoin())
             canvas.after(2000,lambda:addBoom())
-            canvas.after(20000,lambda:addDiamon())
-            canvas.after(30000,lambda:addLife())
+            canvas.after(30000,lambda:addDiamon())
+            canvas.after(50000,lambda:addLife())
         canvas.delete("pause")
         canvas.create_image(650,90 ,image=pause,tags="pause")
         pauseCondition = True
@@ -219,10 +222,13 @@ def moveCoin():
         removeCoin(coinIndexAtPlayer)
         # if lives != 0 and diamons != 3:
         if gameCondition:
-            coins +=1 
+            coins +=10
             canvas.delete("inCreaseCoins")
             canvas.create_text(30,85,fill = "white",font="Times 15 italic bold",text=str(coins),tags="inCreaseCoins")
             print("got coins",coins)
+            if diamons == 3 and coins >= 1800:
+                    canvas.create_text(350,400,fill = "darkblue",font="Times 50 italic bold",text="YOU WON",tags="")
+                    gameCondition  = False
     # Remove Booms
     if len(allBoom)>0:
         firstBoom = allBoom[0]
@@ -252,14 +258,16 @@ def moveCoin():
         if diamonIndexAtPlayer != -1 :
             removeDiamon(diamonIndexAtPlayer)
             if gameCondition:
-                diamons +=1
-                if diamons == 3:
-                    canvas.create_text(350,400,fill = "darkblue",font="Times 50 italic bold",text="YOU WON",tags="")
-                    gameCondition  = False
-                if diamons <= 3 :
+                if diamons < 3 : 
+                    diamons +=1
                     canvas.delete("inCreaseDiamons")
                     canvas.create_text(30,200,fill = "white",font="Times 15 italic bold",text=str(diamons),tags="inCreaseDiamons")
                     print("got diamons",diamons)
+                if diamons == 3 and coins >= 1800:
+                    canvas.create_text(350,400,fill = "darkblue",font="Times 50 italic bold",text="YOU WON",tags="")
+                    gameCondition  = False
+                
+                
                     # and lives > 0
     # Remove Lifes
     if len(allLife)>0:
@@ -297,11 +305,23 @@ def getPlayerX():
 def getPlayerY():
     return canvas.coords(player)[1]
 
-addCoin()
-canvas.after(5000,lambda:addBoom())
-canvas.after(10000,lambda:addDiamon())
-canvas.after(20000,lambda:addLife())
- 
+def entered(event):
+    global startGame
+    if startGame:
+        startGame = False
+        canvas.delete("start")
+        addCoin()
+        canvas.after(5000,lambda:addBoom())
+        canvas.after(30000,lambda:addDiamon())
+        canvas.after(50000,lambda:addLife())
+
+if startGame:
+    canvas.create_text(350,260,fill= "red",font="Times 15 italic bold",text="Fine :  1800+ points    3 diamons",tags="start")
+    playGame =tk.PhotoImage(file="img/play.png")
+    canvas.create_image(350,350 ,image=playGame,tags="start")
+    # canvas.create_text(350,430,fill= "red",font="Times 15 italic bold",text="Fine :  1800 points    3 diamons",tags="start")
+    root.bind("<Key>",entered)
+    
 canvas.tag_bind("sound","<Button-1>",Sound)
 canvas.tag_bind("pause","<Button-1>",Pause)
 root.bind("<Right>",Right)
@@ -312,3 +332,4 @@ root.bind("<Left>",Left)
 canvas.pack(expand=True, fill='both')
 frame.pack(expand=True, fill='both')
 root.mainloop()
+ 

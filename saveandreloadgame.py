@@ -2,8 +2,7 @@
 import tkinter as tk
 import random
 import os.path
-from os import path
-# from playsound import playsound
+from os import path 
 #Windows----------------------------------------------------------------------
 root = tk.Tk()
 root.geometry("700x800")
@@ -11,13 +10,11 @@ frame = tk.Frame()
 frame.master.title("pros.nob")
 canvas = tk.Canvas(frame)
 #Constants--------------------------------------------------------------------
-# winsound.PlaySound("sound/playing.wav",winsound.SND_FILENAME)
-# playsound("sound/playing.wav")
+
 position=[]
 positionplayer=[]
 bg = tk.PhotoImage(file = "img/bg.png")
 bg_win = canvas.create_image(350,400,image=bg)  
-# canvas.create_rectangle(0,0,800,100,fill="blue")
 pl = tk.PhotoImage(file = "img/player.png")
 player = canvas.create_image(350,650,image=pl)
 coin_image = tk.PhotoImage(file = "img/coin.png")
@@ -53,6 +50,11 @@ allLife =[]
 allDiamon =[]
 allBoom =[]
 
+
+monster = tk.PhotoImage(file="img/monster.png")
+canvas.create_image(350,50,image=monster)
+
+
 coins = 0
 lives = 3
 diamons = 0
@@ -70,7 +72,7 @@ def addLife():
     lifeX = random.randrange(100,600)
     allLife.append(canvas.create_image(lifeX,-20,image=life_image,tags="coin"))
     if gameCondition and pauseCondition: 
-        canvas.after(30000,lambda:addLife())
+        canvas.after(50000,lambda:addLife())
     
 
 def addDiamon():
@@ -78,7 +80,7 @@ def addDiamon():
     diamonX = random.randrange(100,600)
     allDiamon.append(canvas.create_image(diamonX,-20,image=diamon_image,tags="coin"))
     if gameCondition and pauseCondition:
-        canvas.after(20000,lambda:addDiamon())
+        canvas.after(30000,lambda:addDiamon())
     
 
 def addBoom():
@@ -197,8 +199,8 @@ def Pause(event):
             moveCoin()
             canvas.after(200,lambda:addCoin())
             canvas.after(2000,lambda:addBoom())
-            canvas.after(20000,lambda:addDiamon())
-            canvas.after(30000,lambda:addLife())
+            canvas.after(30000,lambda:addDiamon())
+            canvas.after(50000,lambda:addLife())
         canvas.delete("pause")
         canvas.create_image(650,90 ,image=pause,tags="pause")
         pauseCondition = True
@@ -299,8 +301,8 @@ def getPlayerY():
 
 addCoin()
 canvas.after(5000,lambda:addBoom())
-canvas.after(10000,lambda:addDiamon())
-canvas.after(20000,lambda:addLife())
+canvas.after(30000,lambda:addDiamon())
+canvas.after(50000,lambda:addLife())
  
 canvas.tag_bind("sound","<Button-1>",Sound)
 canvas.tag_bind("pause","<Button-1>",Pause)
@@ -312,4 +314,4 @@ root.bind("<Left>",Left)
 canvas.pack(expand=True, fill='both')
 frame.pack(expand=True, fill='both')
 root.mainloop()
-
+ 
