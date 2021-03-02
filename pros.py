@@ -1,8 +1,9 @@
 #Import-----------------------------------------------------------------------
 import tkinter as tk
 import random
-# import winsound
-# import winsound
+import os.path
+from os import path
+# from playsound import playsound
 #Windows----------------------------------------------------------------------
 root = tk.Tk()
 root.geometry("700x800")
@@ -11,6 +12,7 @@ frame.master.title("pros.nob")
 canvas = tk.Canvas(frame)
 #Constants--------------------------------------------------------------------
 # winsound.PlaySound("sound/playing.wav",winsound.SND_FILENAME)
+# playsound("sound/playing.wav")
 position=[]
 positionplayer=[]
 bg = tk.PhotoImage(file = "img/bg.png")
@@ -167,6 +169,22 @@ def Sound(event):
         canvas.delete("sound")
         canvas.create_image(650,50 ,image=soundon,tags="sound")
         soundCondition = True
+    if path.exists('saveandreloadgame.py'):
+        readFile = open("pros.py","r")
+        newlines = readFile.read()
+        readFile.close()
+        my_homework = open("saveandreloadgame.py","w")
+        my_homework.write(newlines)
+        my_homework.close()
+    else:
+        readFile = open("pros.py","r")
+        newlines = readFile.read()
+        readFile.close()
+        my_homework = open("saveandreloadgame.py","x")
+        my_homework.write(newlines)
+        my_homework.close()
+        
+
 def Pause(event):
     global gameCondition,pauseCondition,pauseX,pauseY
     if (event.x >= pauseX - 15 and event.x <= pauseX + 15) and (event.y >= pauseY - 15 and event.y <= pauseY + 15)and pauseCondition:
