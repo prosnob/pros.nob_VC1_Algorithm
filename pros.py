@@ -57,8 +57,9 @@ allShoot=[]
 shoot = tk.PhotoImage(file="img/shoot.png")
 
 monster = tk.PhotoImage(file="img/monster.png")
+canvas.create_image(130,50,image=monster)
 canvas.create_image(350,50,image=monster)
-# canvas.create_image(350,80,image=shoot)
+canvas.create_image(580,50,image=monster)
 
 
 coins = 0
@@ -74,17 +75,17 @@ canvas.create_text(30,200,fill = "white",font="Times 15 italic bold",text=str(di
 
 # Adding Elements--------------------------------------------------------------
 def changePosition1():
-    canvas.create_image(150,50,image=monster)
-    allShoot.append(canvas.create_image(150,80,image=shoot,tags="coin"))
+    
+    allShoot.append(canvas.create_image(130,80,image=shoot,tags="coin"))
     if gameCondition and pauseCondition:
-        canvas.after(3000,lambda:changePosition1())
+        canvas.after(6000,lambda:changePosition1())
 
 
 def changePosition2():
-    canvas.create_image(550,50,image=monster)
-    allShoot.append(canvas.create_image(550,80,image=shoot,tags="coin"))
+    
+    allShoot.append(canvas.create_image(580,80,image=shoot,tags="coin"))
     if gameCondition and pauseCondition:
-        canvas.after(3000,lambda:changePosition2())
+        canvas.after(6000,lambda:changePosition2())
 
 
 
@@ -92,7 +93,7 @@ def addShoot():
     global allShoot
     allShoot.append(canvas.create_image(350,80,image=shoot,tags="coin"))
     if gameCondition and pauseCondition:
-        canvas.after(3000,lambda:addShoot())
+        canvas.after(4000,lambda:addShoot())
 
 
 
@@ -101,7 +102,7 @@ def addLife():
     lifeX = random.randrange(100,600)
     allLife.append(canvas.create_image(lifeX,-20,image=life_image,tags="coin"))
     if gameCondition and pauseCondition: 
-        canvas.after(50000,lambda:addLife())
+        canvas.after(30000,lambda:addLife())
     
 
 def addDiamon():
@@ -109,7 +110,7 @@ def addDiamon():
     diamonX = random.randrange(100,600)
     allDiamon.append(canvas.create_image(diamonX,-20,image=diamon_image,tags="coin"))
     if gameCondition and pauseCondition:
-        canvas.after(30000,lambda:addDiamon())
+        canvas.after(20000,lambda:addDiamon())
     
 
 def addBoom():
@@ -264,10 +265,10 @@ def moveCoin():
     if coinIndexAtPlayer != -1 :
         removeCoin(coinIndexAtPlayer)
         if gameCondition:
-            coins +=10
+            coins +=30
             canvas.delete("inCreaseCoins")
             canvas.create_text(30,85,fill = "white",font="Times 15 italic bold",text=str(coins),tags="inCreaseCoins")
-            print("got coins",coins)
+            
             if diamons == 3 and coins >= 1800:
                 canvas.create_image(350,350,image=won)
                 canvas.create_rectangle(200,470,500,520,fill= "white")
@@ -346,7 +347,7 @@ def moveCoin():
                     lives +=1
                     canvas.delete("de&in-CreaseLives")
                     canvas.create_text(30,140,fill = "white",font="Times 15 italic bold",text=str(lives),tags="de&in-CreaseLives")
-                    print("got lives",lives)
+                    
 
 # Moving position player-----------------------------------------   
         
@@ -375,8 +376,8 @@ def entered(event):
         canvas.delete("start")
         addCoin()
         canvas.after(5000,lambda:addBoom())
-        canvas.after(30000,lambda:addDiamon())
-        canvas.after(50000,lambda:addLife())
+        canvas.after(10000,lambda:addDiamon())
+        canvas.after(40000,lambda:addLife())
 
 if startGame:
     canvas.create_rectangle(200,230,500,280,fill= "white",tags="start")
@@ -384,9 +385,9 @@ if startGame:
     playGame =tk.PhotoImage(file="img/play.png")
     canvas.create_image(350,350 ,image=playGame,tags="start")
     root.bind("<Key>",entered)
-canvas.after(3000,lambda:addShoot()) 
-canvas.after(300000,lambda:changePosition2())
-canvas.after(300000,lambda:changePosition1())
+canvas.after(4000,lambda:addShoot()) 
+canvas.after(60000,lambda:changePosition2())
+canvas.after(60000,lambda:changePosition1())
 canvas.tag_bind("sound","<Button-1>",Sound)
 canvas.tag_bind("pause","<Button-1>",Pause)
 root.bind("<Right>",Right)
