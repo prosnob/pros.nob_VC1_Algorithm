@@ -33,10 +33,12 @@ diamon = canvas.create_image(30,170,image=diamon_image)
 pause = tk.PhotoImage(file="img/pause.png")
 canvas.create_image(650,90,image=pause,tags="pause")
 unpause = tk.PhotoImage(file="img/unpause.png")
-
+over = tk.PhotoImage(file="img/overgame.png")
+won = tk.PhotoImage(file="img/wongame.png")
 WINDOW_WIDTH = 700
 WINDOW_HEIGHT = 800
 COIN_SIZE = LIFE_SIZE=BOOM_SIZE=DIAMON_SIZE=30  # height = with
+SHOOT_SIZE = 20
 soundX = 650
 soundY = 50
 pauseX = 650
@@ -50,16 +52,20 @@ allCoin =[]
 allLife =[]
 allDiamon =[]
 allBoom =[]
+allShoot=[]
 
+shoot = tk.PhotoImage(file="img/shoot.png")
 
 monster = tk.PhotoImage(file="img/monster.png")
 canvas.create_image(350,50,image=monster)
+# canvas.create_image(350,80,image=shoot)
 
 
 coins = 0
 lives = 3
 diamons = 0
 booms = 0
+shoots = 0
 canvas.create_text(30,85,fill = "white",font="Times 15 italic bold",text=str(coins),tags="inCreaseCoins")
 canvas.create_text(30,140,fill = "white",font="Times 15 italic bold",text=str(lives),tags="de&in-CreaseLives")
 canvas.create_text(30,200,fill = "white",font="Times 15 italic bold",text=str(diamons),tags="inCreaseDiamons")
@@ -67,6 +73,28 @@ canvas.create_text(30,200,fill = "white",font="Times 15 italic bold",text=str(di
 # #Function---------------------------------------------------------------------
 
 # Adding Elements--------------------------------------------------------------
+def changePosition1():
+    canvas.create_image(150,50,image=monster)
+    allShoot.append(canvas.create_image(150,80,image=shoot,tags="coin"))
+    if gameCondition and pauseCondition:
+        canvas.after(3000,lambda:changePosition1())
+
+
+def changePosition2():
+    canvas.create_image(550,50,image=monster)
+    allShoot.append(canvas.create_image(550,80,image=shoot,tags="coin"))
+    if gameCondition and pauseCondition:
+        canvas.after(3000,lambda:changePosition2())
+
+
+
+def addShoot():
+    global allShoot
+    allShoot.append(canvas.create_image(350,80,image=shoot,tags="coin"))
+    if gameCondition and pauseCondition:
+        canvas.after(3000,lambda:addShoot())
+
+
 
 def addLife():
     global allLife
@@ -101,6 +129,10 @@ def addCoin():
         moveCoin()
 
 # Removing Elements----------------------------------------------------------
+def removeShoot(index):
+    shootId = allShoot[index]
+    canvas.delete(shootId)
+    allShoot.pop(index)
 
 def removeCoin(index):
     coinId = allCoin[index]
@@ -160,6 +192,14 @@ def findBoomIndexAt(posX, posY):
         if boomX + 15 > posX-45 and boomX-15 < posX+45 and  boomY +15 > posY-45 and boomY -15  < posY +45:
             return n
     return -1 # no diamon found
+def findShootIndexAt(posX, posY):
+    for n in range (len( allShoot)):
+        coordShoot = canvas.coords(allShoot[n])
+        shootX = coordShoot[0]
+        shootY = coordShoot[1]
+        if shootX + 10 > posX-45 and shootX-10 < posX+45 and  shootY +10 > posY-45 and shootY -10  < posY +45:
+            return n
+    return -1 # no diamon found
 
 # Removing Elements----------------------------------------------------------------
 def Sound(event):
@@ -207,29 +247,35 @@ def Pause(event):
         pauseCondition = True
         
 def moveCoin():
-    global coins,lives,diamons,booms,gameCondition
+    global coins,lives,diamons,booms,gameCondition,shoots
     if gameCondition and pauseCondition:
         canvas.move("coin",0,20)
 
-    # 1 - Remove the first coin if outside of the window
+    # 1 - Remove the first coin if outside of the window-----------------------------------
+
     firstCoin = allCoin[0]
     coordsFirstCoin = canvas.coords(firstCoin)
     if coordsFirstCoin[1] > WINDOW_HEIGHT - COIN_SIZE:
             removeCoin(0)
-    # 2 - If player is on a coin remove the coin
+
+    # 2 - If player is on a coin remove the coin----------------------------
+
     coinIndexAtPlayer = findCoinIndexAt(getPlayerX(), getPlayerY())
     if coinIndexAtPlayer != -1 :
         removeCoin(coinIndexAtPlayer)
-        # if lives != 0 and diamons != 3:
         if gameCondition:
             coins +=10
             canvas.delete("inCreaseCoins")
             canvas.create_text(30,85,fill = "white",font="Times 15 italic bold",text=str(coins),tags="inCreaseCoins")
             print("got coins",coins)
             if diamons == 3 and coins >= 1800:
-                    canvas.create_text(350,400,fill = "darkblue",font="Times 50 italic bold",text="YOU WON",tags="")
-                    gameCondition  = False
-    # Remove Booms
+                canvas.create_image(350,350,image=won)
+                canvas.create_rectangle(200,470,500,520,fill= "white")
+                canvas.create_text(350,500,fill = "darkblue",font="Times 20 italic bold",text="Scores: "+str(coins)+"   Diamons: "+str(diamons))
+                gameCondition  = False
+
+    # Remove Booms---------------------------
+
     if len(allBoom)>0:
         firstBoom = allBoom[0]
         coordsFirstBoom = canvas.coords(firstBoom)
@@ -241,14 +287,14 @@ def moveCoin():
             if gameCondition:
                 lives -=1
                 if lives == 0 :
-                    canvas.create_text(350,400,fill = "red",font="Times 50 italic bold",text="GAME OVER",tags="")
+                    canvas.create_image(350,350,image=over)
                     gameCondition = False
                 if lives >= 0 :   
                     canvas.delete("de&in-CreaseLives")
                     canvas.create_text(30,140,fill = "white",font="Times 15 italic bold",text=str(lives),tags="de&in-CreaseLives")
-                    print("got booms",booms)
-                    # and diamons != 3
-        # Remove Diamons
+
+        # Remove Diamons-------------------------------
+
     if len(allDiamon)>0:
         firstDiamon = allDiamon[0]
         coordsFirstDiamon = canvas.coords(firstDiamon)
@@ -262,14 +308,31 @@ def moveCoin():
                     diamons +=1
                     canvas.delete("inCreaseDiamons")
                     canvas.create_text(30,200,fill = "white",font="Times 15 italic bold",text=str(diamons),tags="inCreaseDiamons")
-                    print("got diamons",diamons)
                 if diamons == 3 and coins >= 1800:
-                    canvas.create_text(350,400,fill = "darkblue",font="Times 50 italic bold",text="YOU WON",tags="")
+                    canvas.create_image(350,350,image=won)
+                    canvas.create_rectangle(200,470,500,520,fill= "white")
+                    canvas.create_text(350,500,fill = "darkblue",font="Times 20 italic bold",text="Scores: "+str(coins)+"   Diamons: "+str(diamons))
                     gameCondition  = False
+    # Remove Shoots-------------------------------
                 
-                
-                    # and lives > 0
-    # Remove Lifes
+    if len(allShoot)>0:
+        firstShoot = allShoot[0]
+        coordsFirstShoot = canvas.coords(firstShoot)
+        if coordsFirstShoot[1] > WINDOW_HEIGHT - SHOOT_SIZE:
+                removeShoot(0)
+        shootIndexAtPlayer = findShootIndexAt( getPlayerX(), getPlayerY() )
+        if shootIndexAtPlayer != -1 :
+            removeShoot(shootIndexAtPlayer)
+            if gameCondition:
+                lives -=1
+                if lives == 0 :
+                    canvas.create_image(350,350,image=over)
+                    gameCondition = False
+                if lives >= 0 :   
+                    canvas.delete("de&in-CreaseLives")
+                    canvas.create_text(30,140,fill = "white",font="Times 15 italic bold",text=str(lives),tags="de&in-CreaseLives")
+    # Remove Lifes----------------------------------
+
     if len(allLife)>0:
         firstLife = allLife[0]
         coordsFirstLife = canvas.coords(firstLife)
@@ -297,7 +360,7 @@ def Left(event):
         if getPlayerX() > 50:
             canvas.move(player,-50,0)
 
-# Get position of Player
+# Get position of Player-------------------
 
 def getPlayerX():
     return canvas.coords(player)[0]
@@ -316,12 +379,14 @@ def entered(event):
         canvas.after(50000,lambda:addLife())
 
 if startGame:
-    canvas.create_text(350,260,fill= "red",font="Times 15 italic bold",text="Fine :  1800+ points    3 diamons",tags="start")
+    canvas.create_rectangle(200,230,500,280,fill= "white",tags="start")
+    canvas.create_text(350,260,fill= "red",font="Times 15 italic bold",text="Find :  1800+ points    3 diamons",tags="start")
     playGame =tk.PhotoImage(file="img/play.png")
     canvas.create_image(350,350 ,image=playGame,tags="start")
-    # canvas.create_text(350,430,fill= "red",font="Times 15 italic bold",text="Fine :  1800 points    3 diamons",tags="start")
     root.bind("<Key>",entered)
-    
+canvas.after(3000,lambda:addShoot()) 
+canvas.after(300000,lambda:changePosition2())
+canvas.after(300000,lambda:changePosition1())
 canvas.tag_bind("sound","<Button-1>",Sound)
 canvas.tag_bind("pause","<Button-1>",Pause)
 root.bind("<Right>",Right)
