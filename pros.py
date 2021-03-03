@@ -213,20 +213,6 @@ def Sound(event):
         canvas.delete("sound")
         canvas.create_image(650,50 ,image=soundon,tags="sound")
         soundCondition = True
-    # if path.exists('saveandreloadgame.py'):
-    #     readFile = open("pros.py","r")
-    #     newlines = readFile.read()
-    #     readFile.close()
-    #     my_homework = open("saveandreloadgame.py","w")
-    #     my_homework.write(newlines)
-    #     my_homework.close()
-    # else:
-    #     readFile = open("pros.py","r")
-    #     newlines = readFile.read()
-    #     readFile.close()
-    #     my_homework = open("saveandreloadgame.py","x")
-    #     my_homework.write(newlines)
-    #     my_homework.close()
         
 
 def Pause(event):
